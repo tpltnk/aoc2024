@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 )
 
 func main() {
@@ -60,7 +59,6 @@ func main() {
 	for i := 0; i < height; i++ {
 		for j := 0; j < width; j++ {
 			if mo[i][j] == '#' || mo[i][j] == '^' {
-				fmt.Println("skipped", counter, i, j)
 				continue
 			}
 			posTurn := [][2]int{}
@@ -74,9 +72,7 @@ func main() {
 			currPos := [2]int{cp[0], cp[1]}
 			currCaret := cc
 			isLooping := false
-			// ticker := time.NewTicker(time.Millisecond * 50)
-			start := time.Now()
-			for time.Since(start) < time.Second*2 {
+			for {
 				m[currPos[0]][currPos[1]] = 'X'
 				newPos := [2]int{
 					currPos[0] + carets[currCaret][0],
@@ -87,15 +83,17 @@ func main() {
 				}
 				if m[newPos[0]][newPos[1]] == '#' {
 					currCaret = turn[currCaret]
-					posTurnIndex := -1
+					posTurnIndexs := []int{}
 					for pti, pt := range posTurn {
 						if pt[0] == currPos[0] && pt[1] == currPos[1] {
-							posTurnIndex = pti
+							posTurnIndexs = append(posTurnIndexs, pti)
 						}
 					}
-					if posTurnIndex != -1 && posTurnCaret[posTurnIndex] == currCaret {
-						isLooping = true
-						break
+					for _, pti := range posTurnIndexs {
+						if posTurnCaret[pti] == currCaret {
+							isLooping = true
+							goto out
+						}
 					}
 					posTurn = append(posTurn, currPos)
 					posTurnCaret = append(posTurnCaret, currCaret)
@@ -103,24 +101,10 @@ func main() {
 					currPos = newPos
 				}
 				m[currPos[0]][currPos[1]] = currCaret
-				/*out, _ := os.Create("output.txt")
-				for _, line := range m {
-					out.Write(append(line, '\n'))
-				}
-				out.Sync()
-				out.Close()
-				<-ticker.C*/
-				// Part 1:
-				// pos[currPos] = true
 			}
-			if time.Since(start) > time.Second*2 {
-				isLooping = true
-			}
+		out:
 			if isLooping {
 				counter++
-				fmt.Println("looping", counter, i, j, currPos, string(currCaret))
-			} else {
-				fmt.Println("xxxxxxx", counter, i, j, currPos, string(currCaret))
 			}
 		}
 	}
