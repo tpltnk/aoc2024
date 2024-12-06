@@ -46,8 +46,6 @@ func main() {
 		lineCount++
 	}
 
-	height := len(mo)
-	width := len(mo[0])
 	/*
 		Part 1:
 		pos := map[[2]int]bool{
@@ -56,8 +54,8 @@ func main() {
 
 	counter := 0
 
-	for i := 0; i < height; i++ {
-		for j := 0; j < width; j++ {
+	for i := 0; i < len(mo); i++ {
+		for j := 0; j < len(mo[0]); j++ {
 			if mo[i][j] == '#' || mo[i][j] == '^' {
 				continue
 			}
@@ -78,21 +76,17 @@ func main() {
 					currPos[0] + carets[currCaret][0],
 					currPos[1] + carets[currCaret][1],
 				}
-				if !(newPos[0] >= 0 && newPos[0] < height && newPos[1] >= 0 && newPos[1] < width) {
+				if !(newPos[0] >= 0 && newPos[0] < len(mo) && newPos[1] >= 0 && newPos[1] < len(mo[0])) {
 					break
 				}
 				if m[newPos[0]][newPos[1]] == '#' {
 					currCaret = turn[currCaret]
-					posTurnIndexs := []int{}
 					for pti, pt := range posTurn {
 						if pt[0] == currPos[0] && pt[1] == currPos[1] {
-							posTurnIndexs = append(posTurnIndexs, pti)
-						}
-					}
-					for _, pti := range posTurnIndexs {
-						if posTurnCaret[pti] == currCaret {
-							isLooping = true
-							goto out
+							if posTurnCaret[pti] == currCaret {
+								isLooping = true
+								goto out
+							}
 						}
 					}
 					posTurn = append(posTurn, currPos)
